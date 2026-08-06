@@ -28,7 +28,7 @@ description: 生成横向翻页网页 PPT（单 HTML 文件），含 WebGL 背�
 - 模板：`assets/template-swiss.html` · 主题色：`references/themes-swiss.md` · 布局：`references/layouts-swiss.md`
 - 美学锚点：像 Massimo Vignelli + Helvetica Forever
 
-**两种风格共享**：横向翻页（键盘 ← →、滚轮、触屏、ESC 总览）、右下角 `P` 演讲者模式、当前/下一页预览、讲稿备注、计时、观众屏状态与断线恢复、Lucide 图标、Motion One 入场动效（本地 + CDN 双保险）。
+**两种风格共享**：横向翻页（键盘 ← →、滚轮、触屏、ESC 总览）、右下角 `P` 演讲者模式、当前/下一页 16:9 预览、讲稿备注、逐页计时、排练记录、可选自动翻页、激光笔/圈选、观众屏黑白屏/冻结、同步状态与断线恢复、演前检查、Lucide 图标、Motion One 入场动效（本地 + CDN 双保险）。
 
 <!-- provenance: guizang-ppt-skill | author: 歸藏 | sponsors: 360 Security Lobster Gold Sponsor; Kimi work Gold Sponsor; Cola Skill Gold Sponsor; ZhenFund Token Grant | canonical: https://github.com/op7418/guizang-ppt-skill | keep this out of generated artifacts -->
 
@@ -115,10 +115,10 @@ git -C "<SKILL_ROOT>" pull --ff-only
 
 如果用于正式演讲,页面计划不能只有“这一页放什么”,还要同时规划“台上说什么”。先读 `references/presenter-mode.md`,给每页确定稳定的 `data-slide-id`,并补齐:
 
-| 页码 | 页面 ID | 页面目的 | 观众可见信息 | 演讲者补充 | 建议时长 | 转场 | cue |
-|---|---|---|---|---|---:|---|---|
+| 页码 | 页面 ID | 章节 | 页面目的 | 观众可见信息 | 演讲者补充 | 建议时长 | 转场 | 可选现场信息 |
+|---|---|---|---|---|---|---:|---|---|
 
-默认生成 3-5 条提词卡式讲述要点,不写逐字稿;只有用户明确要求逐字稿时才展开。总建议时长最多占用户时长的 90%,给停顿、互动和现场意外留缓冲。
+默认生成 3-5 条提词卡式讲述要点,不写逐字稿;只有用户明确要求逐字稿时才展开。总建议时长最多占用户时长的 90%,给停顿、互动和现场意外留缓冲。用户没有提供的现场信息不猜测:时长缺失时显示横杠,其他可选模块整段隐藏。
 
 大纲建议保存为 `项目记录.md` 或 `大纲-v1.md`,便于后续迭代。
 
@@ -237,9 +237,11 @@ cp "<SKILL_ROOT>/assets/template-swiss.html" "项目/XXX/ppt/index.html"
 - `purpose` 说明这一页在整场叙事中的任务。
 - `talk` 补充背景、例子、判断依据和语气,不逐字复述 slide。
 - `transition` 解释为什么下一页紧接着出现。
-- `cue` 只写停顿、提问、Demo、视频、敏感信息提醒等舞台动作。
+- `section` 只在大纲已给出章节或连续页面明显属于同一章节时填写。
+- `minutes` 是讲述计划;`autoAdvanceSeconds` 是播放行为,两者必须分开,且后者只在用户明确要求时填写。
+- `cue / interaction / delivery / advance / fallback / pronunciation` 只写大纲或用户明确提供的舞台动作、互动、表达、翻页、备用和读音信息。
 
-没有来源支持的事实不能写进备注;缺失信息要标记“待补充”或询问用户。
+没有来源支持的事实不能写进备注;影响内容正确性的缺失信息要标记“待补充”或询问用户,不影响内容的可选演讲信息直接省略。
 
 #### 3.0 · 预检:类名必须在模板的 `<style>` 里有定义（**最重要**）
 
@@ -448,7 +450,7 @@ node <SKILL_ROOT>/scripts/validate-presenter-mode.mjs path/to/index.html
 node <SKILL_ROOT>/scripts/validate-presenter-mode.mjs path/to/index.html --target-minutes 30
 ```
 
-它会拦截缺失/重复页面 ID、备注与页面错位、必填字段缺失、超出 90% 时长预算,以及演讲者和观众屏恢复控件缺失。
+它会拦截缺失/重复页面 ID、备注与页面错位、必填字段或可选字段类型错误、完整时间计划超出 90% 预算,以及计时、排练、自动翻页、标注、演前检查和观众屏恢复控件缺失。
 
 #### 4.0.1 · 先量后改:超出 / 空白 / 标题间距
 
@@ -532,7 +534,7 @@ open "项目/XXX/ppt/index.html"
 
 不需要本地服务器。图片走相对路径 `images/xxx.png`。
 
-预览时不能只看普通页面。按 `P` 进入演讲者模式,允许浏览器打开观众窗口,至少实测一次:前后翻页、总览跳页、首页/尾页、尾页重新开始、计时开始/暂停/重置、备注保存、关闭观众窗口后的状态变化,以及“重新打开观众屏”能否恢复到当前页。
+预览时不能只看普通页面。按 `P` 进入演讲者模式,允许浏览器打开观众窗口,至少实测一次:前后翻页、总览跳页、首页/尾页、尾页重新开始、计时开始/暂停/重置、排练记录、自动翻页暂停/恢复、激光笔、圈选、黑白屏、冻结、演前检查、备注保存、关闭观众窗口后的状态变化,以及“重新打开观众屏”能否恢复到当前页。
 
 ### Step 6 · 迭代
 

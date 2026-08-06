@@ -65,7 +65,15 @@ else{
   speakerNotes.forEach((note,i)=>{
     if(!note||typeof note!=='object'){errors.push(`Note ${i+1}: must be an object.`);return;}
     for(const field of ['id','title','purpose','transition'])if(typeof note[field]!=='string'||!note[field].trim())errors.push(`Note ${i+1}: ${field} is required.`);
-    if(!Number.isFinite(Number(note.minutes))||Number(note.minutes)<=0)errors.push(`Note ${i+1}: minutes must be > 0.`);
+    if(note.minutes!==undefined&&note.minutes!==null&&note.minutes!==''&&(!Number.isFinite(Number(note.minutes))||Number(note.minutes)<=0))errors.push(`Note ${i+1}: minutes must be > 0 when provided.`);
+    if(note.autoAdvanceSeconds!==undefined&&note.autoAdvanceSeconds!==null&&note.autoAdvanceSeconds!==''&&(!Number.isFinite(Number(note.autoAdvanceSeconds))||Number(note.autoAdvanceSeconds)<=0))errors.push(`Note ${i+1}: autoAdvanceSeconds must be > 0 when provided.`);
+    if(note.section!==undefined&&(typeof note.section!=='string'||!note.section.trim()))errors.push(`Note ${i+1}: section must be non-empty text when provided.`);
+    for(const field of ['cue','interaction','delivery','advance','fallback','pronunciation']){
+      const value=note[field];
+      if(value===undefined||value===null||value==='')continue;
+      const valid=typeof value==='string'?Boolean(value.trim()):Array.isArray(value)&&value.length>0&&value.every(x=>typeof x==='string'&&x.trim());
+      if(!valid)errors.push(`Note ${i+1}: ${field} must be non-empty text or an array of non-empty text.`);
+    }
     if(!Array.isArray(note.talk)||!note.talk.length)errors.push(`Note ${i+1}: talk must be a non-empty array.`);
     else{
       if(note.talk.some(x=>typeof x!=='string'||!x.trim()))errors.push(`Note ${i+1}: every talk item must be non-empty text.`);
@@ -90,15 +98,27 @@ const runtimeChecks=[
   ['direct window sync','postMessage('],
   ['BroadcastChannel fallback','BroadcastChannel'],
   ['storage fallback','__guizangPptSync'],
+  ['per-slide timer','id="ppt-time-detail"'],
+  ['rehearsal mode','id="ppt-rehearsal"'],
+  ['auto advance','id="ppt-auto-toggle"'],
+  ['laser and circle tools','id="ppt-presenter-ink"'],
+  ['audience annotation layer','id="ppt-audience-ink"'],
+  ['black, white, and freeze controls','setScreenMode'],
+  ['preflight checks','id="ppt-preflight"'],
+  ['layout presets','data-layout-choice'],
+  ['shortcut help','openShortcuts'],
 ];
 for(const [label,needle]of runtimeChecks)if(!html.includes(needle))errors.push(`Presenter runtime missing ${label}.`);
 if(/\.ppt-preview-stack\{[^}]*grid-template-columns/.test(html))errors.push('Presenter previews must stack vertically; remove grid-template-columns from .ppt-preview-stack.');
 
-const planned=speakerNotes.reduce((sum,n)=>sum+(Number(n?.minutes)||0),0);
-if(Number.isFinite(targetMinutes)&&targetMinutes>0&&planned>targetMinutes*.9)errors.push(`Planned ${planned.toFixed(1)} min exceeds the 90% speaking budget (${(targetMinutes*.9).toFixed(1)} of ${targetMinutes} min).`);
-if(Number.isFinite(targetMinutes)&&targetMinutes>0&&planned<targetMinutes*.55)warnings.push(`Planned ${planned.toFixed(1)} min is below 55% of the requested ${targetMinutes} min; confirm the deck is not under-scripted.`);
+const timedNotes=speakerNotes.filter(n=>Number.isFinite(Number(n?.minutes))&&Number(n.minutes)>0);
+const planned=timedNotes.reduce((sum,n)=>sum+Number(n.minutes),0);
+const completePlan=speakerNotes.length>0&&timedNotes.length===speakerNotes.length;
+if(timedNotes.length&&!completePlan)warnings.push(`Timing is partial: ${timedNotes.length} of ${speakerNotes.length} notes provide minutes; total-budget checks are skipped.`);
+if(completePlan&&Number.isFinite(targetMinutes)&&targetMinutes>0&&planned>targetMinutes*.9)errors.push(`Planned ${planned.toFixed(1)} min exceeds the 90% speaking budget (${(targetMinutes*.9).toFixed(1)} of ${targetMinutes} min).`);
+if(completePlan&&Number.isFinite(targetMinutes)&&targetMinutes>0&&planned<targetMinutes*.55)warnings.push(`Planned ${planned.toFixed(1)} min is below 55% of the requested ${targetMinutes} min; confirm the deck is not under-scripted.`);
 
 warnings.forEach(x=>console.warn(`WARN  ${x}`));
 errors.forEach(x=>console.error(`ERROR ${x}`));
-console.log(`Presenter validation: ${slideIds.length} slides, ${speakerNotes.length} notes, ${planned.toFixed(1)} planned minutes, ${errors.length} errors, ${warnings.length} warnings.`);
+console.log(`Presenter validation: ${slideIds.length} slides, ${speakerNotes.length} notes, ${completePlan?planned.toFixed(1):'partial / —'} planned minutes, ${errors.length} errors, ${warnings.length} warnings.`);
 process.exit(errors.length?1:0);
