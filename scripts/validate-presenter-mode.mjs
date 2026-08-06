@@ -78,6 +78,10 @@ else{
 const runtimeChecks=[
   ['right-bottom presenter entry','id="ppt-presenter-btn"'],
   ['presenter shell','id="ppt-presenter"'],
+  ['vertical preview stack','.ppt-preview-stack{display:grid;grid-template-rows:minmax(0,1fr)'],
+  ['16:9 preview viewport','class="ppt-frame-viewport"'],
+  ['proportional preview fitter','fitPresenterFrames'],
+  ['exact 16:9 fitting','availableHeight*(16/9)'],
   ['overview control','id="ppt-grid"'],
   ['first-page control','id="ppt-first"'],
   ['last/restart control','id="ppt-last"'],
@@ -88,6 +92,7 @@ const runtimeChecks=[
   ['storage fallback','__guizangPptSync'],
 ];
 for(const [label,needle]of runtimeChecks)if(!html.includes(needle))errors.push(`Presenter runtime missing ${label}.`);
+if(/\.ppt-preview-stack\{[^}]*grid-template-columns/.test(html))errors.push('Presenter previews must stack vertically; remove grid-template-columns from .ppt-preview-stack.');
 
 const planned=speakerNotes.reduce((sum,n)=>sum+(Number(n?.minutes)||0),0);
 if(Number.isFinite(targetMinutes)&&targetMinutes>0&&planned>targetMinutes*.9)errors.push(`Planned ${planned.toFixed(1)} min exceeds the 90% speaking budget (${(targetMinutes*.9).toFixed(1)} of ${targetMinutes} min).`);

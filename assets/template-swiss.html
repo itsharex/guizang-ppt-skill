@@ -566,7 +566,7 @@
   body.ppt-preview{pointer-events:none}
   body.ppt-presenter>#deck,body.ppt-presenter>#nav,body.ppt-presenter>#hint,
   body.ppt-presenter>.bg{visibility:hidden}
-  #ppt-presenter{position:fixed;inset:0;z-index:90;display:none;min-width:1000px;min-height:680px;background:#101216;color:#f5f6f7;font-family:Inter,"Noto Sans SC",sans-serif}
+  #ppt-presenter{position:fixed;inset:0;z-index:90;display:none;min-width:0;min-height:0;overflow:hidden;background:#101216;color:#f5f6f7;font-family:Inter,"Noto Sans SC",sans-serif}
   body.ppt-presenter #ppt-presenter{display:grid;grid-template-rows:auto 1fr auto}
   .ppt-presenter-top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 24px;border-bottom:1px solid #2b2e35;background:#15181d}
   .ppt-presenter-brand{font-weight:650;letter-spacing:.02em}.ppt-presenter-meta{display:flex;align-items:center;gap:12px;color:#aeb4be;font-size:14px}
@@ -576,17 +576,21 @@
   .ppt-sync[data-state="connecting"]::before{background:#f0c766}.ppt-sync[data-state="unsynced"]::before,.ppt-sync[data-state="blocked"]::before{background:#ff9e64}.ppt-sync[data-state="disconnected"]::before{background:#ff6b72}
   .ppt-ui-btn{appearance:none;border:1px solid #3a3e48;background:#20242a;color:#f6f7f8;border-radius:8px;padding:9px 13px;font:600 14px/1 Inter,"Noto Sans SC",sans-serif;cursor:pointer}
   .ppt-ui-btn:hover{background:#2a2f37;border-color:#525864}.ppt-ui-btn:focus-visible{outline:2px solid #84a8ff;outline-offset:2px}.ppt-ui-btn:disabled{opacity:.28;cursor:not-allowed}
-  .ppt-presenter-main{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(320px,.75fr);gap:18px;min-height:0;padding:18px 24px}
-  .ppt-preview-stack{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,.42fr);gap:16px;min-width:0;align-items:start}
+  .ppt-presenter-main{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(300px,.75fr);gap:18px;min-height:0;padding:18px 24px}
+  .ppt-preview-stack{display:grid;grid-template-rows:minmax(0,1fr) clamp(132px,22vh,210px);gap:16px;min-width:0;min-height:0}
   .ppt-stage-card,.ppt-notes-card{background:#171a20;border:1px solid #2b2f37;border-radius:12px;overflow:hidden}
+  .ppt-stage-card{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
   .ppt-stage-label{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;color:#aeb4be;font-size:13px;border-bottom:1px solid #292d34}
-  .ppt-frame{display:block;width:100%;aspect-ratio:16/9;border:0;background:#08090b}.ppt-next-frame{opacity:.86}
+  .ppt-frame-viewport{display:grid;place-items:center;min-width:0;min-height:0;overflow:hidden;background:#08090b}
+  .ppt-frame{display:block;width:0;height:0;max-width:100%;max-height:100%;aspect-ratio:16/9;border:0;background:#08090b}.ppt-next-frame{opacity:.86}
   .ppt-notes-card{display:grid;grid-template-rows:auto 1fr;min-height:0}.ppt-notes-head{padding:16px 18px;border-bottom:1px solid #292d34}.ppt-notes-title{font-size:20px;font-weight:650;margin-bottom:7px}.ppt-notes-sub{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#9fa6b1;font-size:13px}
   .ppt-notes-tools{display:flex;align-items:center;gap:6px}.ppt-note-editor{width:100%;height:100%;min-height:0;resize:none;border:0;outline:0;background:#171a20;color:#edf0f3;padding:18px;font:400 var(--ppt-note-size,17px)/1.72 Inter,"Noto Sans SC",sans-serif}
   .ppt-saved{color:#72df99}.ppt-presenter-bottom{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;padding:16px 24px;border-top:1px solid #2b2e35;background:#15181d}
   .ppt-timer{display:flex;align-items:center;gap:9px}.ppt-clock{min-width:72px;font:600 24px/1 var(--mono,monospace);font-variant-numeric:tabular-nums}.ppt-controls{display:flex;align-items:center;gap:8px}.ppt-controls .ppt-ui-btn{min-width:72px}.ppt-controls .ppt-primary{background:#f2f4f6;color:#111318;border-color:#f2f4f6}.ppt-controls .ppt-primary:hover{background:#fff}.ppt-page-state{text-align:right;color:#aeb4be;font-size:14px}.ppt-page-state strong{display:block;color:#fff;font-size:18px;margin-bottom:3px}
   #overview{z-index:110!important}
-  @media(max-width:1200px){.ppt-presenter-main{grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr)}.ppt-preview-stack{grid-template-columns:1fr}.ppt-preview-stack .ppt-stage-card:last-child{display:none}}
+  @media(max-width:1200px){.ppt-presenter-main{grid-template-columns:minmax(0,1.55fr) minmax(280px,.72fr)}}
+  @media(max-width:900px){.ppt-presenter-top{padding:12px 16px}.ppt-presenter-main{grid-template-columns:minmax(0,1.45fr) minmax(250px,.72fr);gap:12px;padding:12px 16px}.ppt-preview-stack{gap:12px;grid-template-rows:minmax(0,1fr) clamp(104px,20vh,150px)}.ppt-presenter-bottom{gap:8px;padding:12px 16px}.ppt-controls{gap:5px}.ppt-controls .ppt-ui-btn{min-width:58px;padding:8px 10px}.ppt-page-state{display:none}}
+  @media(max-height:700px){.ppt-presenter-top{padding-top:11px;padding-bottom:11px}.ppt-presenter-main{padding-top:12px;padding-bottom:12px}.ppt-preview-stack{grid-template-rows:minmax(0,1fr) clamp(96px,18vh,126px);gap:12px}.ppt-stage-label{padding:8px 11px}.ppt-notes-head{padding:12px 14px}.ppt-presenter-bottom{padding-top:10px;padding-bottom:10px}}
 
   /* ESC 索引页: 动画元素强制可见 (覆盖 motion-ready 的 opacity:0) */
   #overview [data-anim]{opacity:1!important;transform:none!important}
@@ -1572,7 +1576,7 @@ window.__pptPresenter=(()=>{
   const slideId=i=>slides[i]?.dataset.slideId||`slide-${String(i+1).padStart(2,'0')}`;
   let mode='deck',session=query.get('session')||Math.random().toString(36).slice(2),audienceWindow=null;
   let channel=null,transportReady=false,popupBlocked=false,audienceOpenedAt=0,lastAckAt=0,lastAckIndex=-1,lastAckSeq=-1,seq=0;
-  let renderedNoteId='',saveTimer=0,noteSize=Number(localStorage.getItem('guizang-ppt-note-size')||17);
+  let renderedNoteId='',saveTimer=0,noteSize=Number(localStorage.getItem('guizang-ppt-note-size')||17),presenterFrameObserver=null;
   let elapsed=0,timerRunning=false,timerStartedAt=0,lowPowerBeforePresenter=window.__lowPowerMode;
   const syncKey=()=>`guizang-ppt-sync:${location.pathname}:${session}`;
   const channelName=()=>`guizang-ppt:${location.pathname}:${session}`;
@@ -1592,11 +1596,24 @@ window.__pptPresenter=(()=>{
     url.searchParams.set('mode',targetMode);url.searchParams.set('session',session);url.searchParams.set('slide',String(i+1));
     return url.href;
   }
+  function fitFrame(frame){
+    const viewport=frame?.closest('.ppt-frame-viewport');
+    if(!viewport)return;
+    const availableWidth=viewport.clientWidth,availableHeight=viewport.clientHeight;
+    if(!availableWidth||!availableHeight)return;
+    const width=Math.min(availableWidth,availableHeight*(16/9));
+    frame.style.width=`${width}px`;
+    frame.style.height=`${width*(9/16)}px`;
+  }
+  function fitPresenterFrames(){
+    fitFrame(document.getElementById('ppt-current-frame'));
+    fitFrame(document.getElementById('ppt-next-frame'));
+  }
   function mountShell(){
     if(document.getElementById('ppt-presenter'))return;
     document.body.insertAdjacentHTML('beforeend',`<div id="ppt-presenter" aria-label="演讲者视图">
       <div class="ppt-presenter-top"><div><div class="ppt-presenter-brand">演讲者视图</div><div class="ppt-presenter-meta"><span id="ppt-plan"></span></div></div><div class="ppt-presenter-meta"><span id="ppt-sync" class="ppt-sync" data-state="disconnected" title="表示观众页面的软件同步状态，不代表 HDMI 等物理线缆状态">观众屏 · 未连接</span><button id="ppt-reopen" class="ppt-ui-btn" type="button">重新打开观众屏</button><button id="ppt-exit" class="ppt-ui-btn" type="button">退出</button></div></div>
-      <div class="ppt-presenter-main"><div class="ppt-preview-stack"><div class="ppt-stage-card"><div class="ppt-stage-label"><span>当前页</span><span id="ppt-current-label"></span></div><iframe id="ppt-current-frame" class="ppt-frame" title="当前页预览"></iframe></div><div class="ppt-stage-card" id="ppt-next-card"><div class="ppt-stage-label"><span>下一页</span><span id="ppt-next-label"></span></div><iframe id="ppt-next-frame" class="ppt-frame ppt-next-frame" title="下一页预览"></iframe></div></div>
+      <div class="ppt-presenter-main"><div class="ppt-preview-stack"><div class="ppt-stage-card"><div class="ppt-stage-label"><span>当前页</span><span id="ppt-current-label"></span></div><div class="ppt-frame-viewport"><iframe id="ppt-current-frame" class="ppt-frame" title="当前页预览"></iframe></div></div><div class="ppt-stage-card" id="ppt-next-card"><div class="ppt-stage-label"><span>下一页</span><span id="ppt-next-label"></span></div><div class="ppt-frame-viewport"><iframe id="ppt-next-frame" class="ppt-frame ppt-next-frame" title="下一页预览"></iframe></div></div></div>
       <div class="ppt-notes-card"><div class="ppt-notes-head"><div id="ppt-notes-title" class="ppt-notes-title"></div><div class="ppt-notes-sub"><span id="ppt-note-meta"></span><span class="ppt-notes-tools"><span id="ppt-saved" class="ppt-saved">已保存</span><button id="ppt-note-smaller" class="ppt-ui-btn" type="button" title="缩小备注字号">A−</button><button id="ppt-note-larger" class="ppt-ui-btn" type="button" title="放大备注字号">A+</button></span></div></div><textarea id="ppt-note-editor" class="ppt-note-editor" spellcheck="false" aria-label="本页演讲备注"></textarea></div></div>
       <div class="ppt-presenter-bottom"><div class="ppt-timer"><span id="ppt-clock" class="ppt-clock">00:00</span><button id="ppt-timer-toggle" class="ppt-ui-btn" type="button">开始计时</button><button id="ppt-timer-reset" class="ppt-ui-btn" type="button">重置</button></div><div class="ppt-controls"><button id="ppt-first" class="ppt-ui-btn" type="button">首页</button><button id="ppt-prev" class="ppt-ui-btn" type="button">上一页</button><button id="ppt-grid" class="ppt-ui-btn ppt-primary" type="button">总览</button><button id="ppt-next" class="ppt-ui-btn" type="button">下一页</button><button id="ppt-last" class="ppt-ui-btn" type="button">尾页</button></div><div class="ppt-page-state"><strong id="ppt-page-title"></strong><span id="ppt-page-count"></span></div></div>
     </div>`);
@@ -1612,7 +1629,10 @@ window.__pptPresenter=(()=>{
     document.getElementById('ppt-note-smaller').onclick=()=>setNoteSize(noteSize-1);
     document.getElementById('ppt-note-larger').onclick=()=>setNoteSize(noteSize+1);
     document.getElementById('ppt-note-editor').addEventListener('input',saveNote);
+    if('ResizeObserver'in window){presenterFrameObserver=new ResizeObserver(()=>requestAnimationFrame(fitPresenterFrames));presenterFrameObserver.observe(document.querySelector('.ppt-preview-stack'));}
+    else addEventListener('resize',fitPresenterFrames);
     setNoteSize(noteSize,false);
+    requestAnimationFrame(fitPresenterFrames);
   }
   function updateShell(){
     if(mode!=='presenter')return;mountShell();
@@ -1630,6 +1650,7 @@ window.__pptPresenter=(()=>{
     document.getElementById('ppt-first').disabled=idx===0;document.getElementById('ppt-prev').disabled=idx===0;document.getElementById('ppt-next').disabled=idx===total-1;
     document.getElementById('ppt-last').textContent=idx===total-1?'重新开始':'尾页';
     if(renderedNoteId!==id){renderedNoteId=id;editor.value=localStorage.getItem(noteStorageKey(id))??generatedNote(n);editor.scrollTop=0;document.getElementById('ppt-saved').textContent='已保存';}
+    requestAnimationFrame(fitPresenterFrames);
     updateSyncStatus();
   }
   function saveNote(){
